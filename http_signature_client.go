@@ -8,16 +8,11 @@ import (
 	`github.com/storezhang/gox`
 )
 
-type (
-	// Client 客户端
-	Client struct {
-		// 授权
-		AccessKey string `json:"accessKey"`
-		SecretKey string `json:"secretKey"`
-	}
-)
+type HttpSignatureClient struct {
+	Options ClientOptions
+}
 
-func (c *Client) RequestApi(
+func (hsc *HttpSignatureClient) RequestApi(
 	url string,
 	method HttpMethod,
 	headers map[string]string,
@@ -29,7 +24,7 @@ func (c *Client) RequestApi(
 		expectedStatusCode int
 	)
 
-	req := NewResty(c).SetResult(rsp)
+	req := NewResty(hsc).SetResult(rsp)
 	// 注入路径参数
 	if 0 != len(pathParams) {
 		req = req.SetPathParams(pathParams)
@@ -88,8 +83,8 @@ func (c *Client) RequestApi(
 	return
 }
 
-func (c Client) String() string {
-	jsonBytes, _ := json.MarshalIndent(c, "", "    ")
+func (hsc HttpSignatureClient) String() string {
+	jsonBytes, _ := json.MarshalIndent(hsc, "", "    ")
 
 	return string(jsonBytes)
 }

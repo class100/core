@@ -11,12 +11,12 @@ import (
 )
 
 // NewResty Resty客户端
-func NewResty(client *Client) *resty.Request {
+func NewResty(client *HttpSignatureClient) *resty.Request {
 	return resty.New().SetTLSClientConfig(&tls.Config{InsecureSkipVerify: true}).
 		SetPreRequestHook(func(c *resty.Client, req *http.Request) (err error) {
 			req.Header.Add("date", time.Now().Format(time.RFC1123))
 
-			privateKey := crypto.PrivateKey([]byte(client.SecretKey))
+			privateKey := crypto.PrivateKey([]byte(client.Options.Secret.SecretKey))
 			preferAlgorithms := []httpsig.Algorithm{httpsig.HMAC_SHA512}
 			digestAlgorithm := httpsig.DigestSha256
 			headersToSign := []string{httpsig.RequestTarget, "date"}
@@ -26,12 +26,13 @@ func NewResty(client *Client) *resty.Request {
 				preferAlgorithms,
 				digestAlgorithm,
 				headersToSign,
-				httpsig.Signature, time.Now().Add(time.Minute).Unix(),
+				httpsig.Signature,
+				time.Now().Add(time.Minute).Unix(),
 			); nil != err {
 				return
 			}
 
-			err = signer.SignRequest(privateKey, client.AccessKey, req, nil)
+			err = signer.SignRequest(privateKey, client.Options.Secret.SecretId, req, nil)
 
 			return
 		}).R()
