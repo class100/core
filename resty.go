@@ -1,4 +1,4 @@
-package class100
+package core
 
 import (
 	`crypto`
@@ -14,20 +14,24 @@ import (
 func NewResty(client *HttpSignatureClient) *resty.Request {
 	return resty.New().SetTLSClientConfig(&tls.Config{InsecureSkipVerify: true}).
 		SetPreRequestHook(func(c *resty.Client, req *http.Request) (err error) {
-			req.Header.Add("date", time.Now().Format(time.RFC1123))
+		req.Header.Add("date", time.Now().Format(time.RFC1123))
 
-			privateKey := crypto.PrivateKey([]byte(client.Options.Secret.SecretKey))
-			preferAlgorithms := []httpsig.Algorithm{httpsig.HMAC_SHA512}
-			digestAlgorithm := httpsig.DigestSha256
-			headersToSign := []string{httpsig.RequestTarget, "date"}
+		privateKey := crypto.PrivateKey([]byte(client.Options.Secret.SecretKey))
 
-			var signer httpsig.Signer
-			if signer, _, err = httpsig.NewSigner(
-				preferAlgorithms,
-				digestAlgorithm,
-				headersToSign,
-				httpsig.Signature,
-				time.Now().Add(time.Minute).Unix(),
+		preferAlgorithms := make([]httpsig.Algorithm, 0, len(client.Options.Algorithms))
+		for _, algorithm := range client.Options.Algorithms {
+			preferAlgorithms = append(preferAlgorithms, httpsig.Algorithm(algorithm))
+		}
+		digestAlgorithm := httpsig.DigestSha256
+		headersToSign := []string{httpsig.RequestTarget, "date"}
+
+		var signer httpsig.Signer
+		if signer, _, err = httpsig.NewSigner(
+			preferAlgorithms,
+			digestAlgorithm,
+			headersToSign,
+			httpsig.Signature,
+			time.Now().Add(time.Minute).Unix(),
 			); nil != err {
 				return
 			}

@@ -1,4 +1,4 @@
-package class100
+package core
 
 // Secret 应用授权密钥
 type Secret struct {

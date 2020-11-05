@@ -1,4 +1,4 @@
-package class100
+package core
 
 const (
 	// Http常用头

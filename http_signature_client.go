@@ -1,4 +1,4 @@
-package class100
+package core
 
 import (
 	`encoding/json`
@@ -8,8 +8,23 @@ import (
 	`github.com/storezhang/gox`
 )
 
+// HttpSignatureClient 基于Http签名的客户端
 type HttpSignatureClient struct {
-	Options ClientOptions
+	Options HttpSignatureClientOptions
+}
+
+// NewHttpSignatureClient 创建默认的Http签名的客户端
+func NewHttpSignatureClient(options ...Option) (client *HttpSignatureClient, err error) {
+	appliedOptions := defaultOptions()
+	for _, apply := range options {
+		apply(&appliedOptions)
+	}
+
+	client = &HttpSignatureClient{
+		Options: appliedOptions,
+	}
+
+	return
 }
 
 func (hsc *HttpSignatureClient) RequestApi(
