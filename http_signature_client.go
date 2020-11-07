@@ -2,6 +2,7 @@ package core
 
 import (
 	`encoding/json`
+	`fmt`
 	`net/http`
 
 	`github.com/go-resty/resty/v2`
@@ -55,7 +56,22 @@ func (hsc *HttpSignatureClient) RequestApi(
 		expectedStatusCode = http.StatusOK
 
 		if nil != params {
-			req = req.SetQueryParams(params.(map[string]string))
+			var (
+				flattenParams map[string]interface{}
+				paramMap      = make(map[string]string)
+			)
+
+			if flattenParams, err = gox.StructToMap(params); nil != err {
+				return
+			}
+			if flattenParams, err = gox.Flatten(flattenParams, "", gox.DotStyle); nil != err {
+				return
+			}
+
+			for key, value := range flattenParams {
+				paramMap[key] = fmt.Sprintf("%s", value)
+			}
+			req = req.SetQueryParams(paramMap)
 		}
 		serverRsp, err = req.Get(url)
 	case HttpMethodPost:
