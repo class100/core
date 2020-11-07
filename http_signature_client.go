@@ -69,7 +69,7 @@ func (hsc *HttpSignatureClient) RequestApi(
 			}
 
 			for key, value := range flattenParams {
-				paramMap[key] = fmt.Sprintf("%s", value)
+				paramMap[key] = fmt.Sprintf("%v", value)
 			}
 			req = req.SetQueryParams(paramMap)
 		}
