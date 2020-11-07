@@ -5,7 +5,7 @@ go 1.15
 require (
 	github.com/go-fed/httpsig v1.0.0
 	github.com/go-resty/resty/v2 v2.3.0
-	github.com/storezhang/gox v1.2.7
+	github.com/storezhang/gox v1.2.10
 	golang.org/x/text v0.3.2 // indirect
 )
 
