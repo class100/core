@@ -31,7 +31,7 @@ func (hsc *HttpSignatureClient) RequestApi(
 	url string,
 	method HttpMethod,
 	headers map[string]string,
-	params interface{}, pathParams map[string]string,
+	params interface{}, paths map[string]string,
 	rsp interface{},
 ) (err error) {
 	var (
@@ -41,8 +41,8 @@ func (hsc *HttpSignatureClient) RequestApi(
 
 	req := NewResty(hsc).SetResult(rsp)
 	// 注入路径参数
-	if 0 != len(pathParams) {
-		req = req.SetPathParams(pathParams)
+	if 0 != len(paths) {
+		req = req.SetPathParams(paths)
 	}
 
 	// 注入请求头
