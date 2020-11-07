@@ -31,9 +31,9 @@ func NewHttpSignatureClient(options ...Option) (client *HttpSignatureClient, err
 func (hsc *HttpSignatureClient) RequestApi(
 	url string,
 	method HttpMethod,
-	params interface{}, paths map[string]string,
+	data interface{},
 	rsp interface{},
-	headers ...Header,
+	params ...gox.HttpParameter,
 ) (err error) {
 	var (
 		serverRsp          *resty.Response
@@ -41,27 +41,38 @@ func (hsc *HttpSignatureClient) RequestApi(
 	)
 
 	req := NewResty(hsc).SetResult(rsp)
-	// 注入路径参数
-	if 0 != len(paths) {
-		req = req.SetPathParams(paths)
-	}
 
-	// 注入请求头
-	for _, header := range headers {
-		req.SetHeader(header.Key, header.Value)
+	// 注入请求头和路径参数
+	var (
+		headers    = make(map[string]string)
+		pathParams = make(map[string]string)
+	)
+	for _, param := range params {
+		switch param.Type() {
+		case gox.HttpParameterTypeHeader:
+			headers[param.Key()] = param.Value()
+		case gox.HttpParameterTypePathParameter:
+			pathParams[param.Key()] = param.Value()
+		}
+	}
+	if 0 != len(headers) {
+		req.SetHeaders(headers)
+	}
+	if 0 != len(pathParams) {
+		req.SetPathParams(pathParams)
 	}
 
 	switch method {
 	case HttpMethodGet:
 		expectedStatusCode = http.StatusOK
 
-		if nil != params {
+		if nil != data {
 			var (
 				flattenParams map[string]interface{}
 				paramMap      = make(map[string]string)
 			)
 
-			if flattenParams, err = gox.StructToMap(params); nil != err {
+			if flattenParams, err = gox.StructToMap(data); nil != err {
 				return
 			}
 			if flattenParams, err = gox.Flatten(flattenParams, "", gox.DotStyle); nil != err {
@@ -77,22 +88,22 @@ func (hsc *HttpSignatureClient) RequestApi(
 	case HttpMethodPost:
 		expectedStatusCode = http.StatusCreated
 
-		if nil != params {
-			req = req.SetBody(params)
+		if nil != data {
+			req = req.SetBody(data)
 		}
 		serverRsp, err = req.Post(url)
 	case HttpMethodPut:
 		expectedStatusCode = http.StatusOK
 
-		if nil != params {
-			req = req.SetBody(params)
+		if nil != data {
+			req = req.SetBody(data)
 		}
 		serverRsp, err = req.Put(url)
 	case HttpMethodDelete:
 		expectedStatusCode = http.StatusNoContent
 
-		if nil != params {
-			req = req.SetBody(params)
+		if nil != data {
+			req = req.SetBody(data)
 		}
 		serverRsp, err = req.Delete(url)
 	}
