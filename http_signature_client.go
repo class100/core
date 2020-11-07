@@ -30,9 +30,9 @@ func NewHttpSignatureClient(options ...Option) (client *HttpSignatureClient, err
 func (hsc *HttpSignatureClient) RequestApi(
 	url string,
 	method HttpMethod,
-	headers map[string]string,
 	params interface{}, paths map[string]string,
 	rsp interface{},
+	headers ...Header,
 ) (err error) {
 	var (
 		serverRsp          *resty.Response
@@ -46,8 +46,8 @@ func (hsc *HttpSignatureClient) RequestApi(
 	}
 
 	// 注入请求头
-	if 0 != len(headers) {
-		req.SetHeaders(headers)
+	for _, header := range headers {
+		req.SetHeader(header.Key, header.Value)
 	}
 
 	switch method {
