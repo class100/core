@@ -117,9 +117,17 @@ func (hsc *HttpSignatureClient) RequestApi(
 		return
 	}
 
-	// 检查状态码
+	// 检查状态码，要求接口必须满足RESTFul API设计规范，如果不满足，则封装返回错误
+	// RESTFul API设计规范：https://github.com/storezhang/rest-api-standard
 	if expectedStatusCode != serverRsp.StatusCode() {
-		err = gox.NewCodeError(gox.ErrorCode(serverRsp.StatusCode()), "请求服务器不符合预期", RestyStringBody(serverRsp))
+		err = &gox.CodeError{}
+		if jsonErr := json.Unmarshal([]byte(RestyStringBody(serverRsp)), err); nil != jsonErr {
+			err = gox.NewCodeError(
+				gox.ErrorCode(serverRsp.StatusCode()),
+				"请求服务器不符合预期",
+				RestyStringBody(serverRsp),
+			)
+		}
 	}
 
 	return
