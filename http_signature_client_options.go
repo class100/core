@@ -1,5 +1,9 @@
 package core
 
+import (
+	`time`
+)
+
 type (
 	// Option 配置选项
 	Option func(*HttpSignatureClientOptions)
@@ -10,6 +14,12 @@ type (
 		Secret Secret
 		// Algorithms 签名算法
 		Algorithms []SignatureAlgorithm
+		// Proxy 代理地址
+		Proxy string
+		// Timeout 超时时间
+		Timeout time.Duration
+		// Retry 重试机制
+		Retry Retry
 	}
 )
 
@@ -32,5 +42,19 @@ func WithSecret(secret Secret) Option {
 func WithAlgorithms(algorithms ...SignatureAlgorithm) Option {
 	return func(options *HttpSignatureClientOptions) {
 		options.Algorithms = algorithms
+	}
+}
+
+// WithProxy 配置代理
+func WithProxy(proxy string) Option {
+	return func(options *HttpSignatureClientOptions) {
+		options.Proxy = proxy
+	}
+}
+
+// WithRetry 配置重试
+func WithRetry(retry Retry) Option {
+	return func(options *HttpSignatureClientOptions) {
+		options.Retry = retry
 	}
 }
