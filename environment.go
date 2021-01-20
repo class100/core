@@ -3,8 +3,6 @@ package core
 const (
 	// EnvironmentDev 开发
 	EnvironmentDev Environment = "dev"
-	// EnvironmentTest 测试
-	EnvironmentTest Environment = "test"
 	// EnvironmentQa 测试
 	EnvironmentQa Environment = "qa"
 	// EnvironmentProd 生产
