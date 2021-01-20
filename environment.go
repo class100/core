@@ -2,18 +2,18 @@ package core
 
 const (
 	// EnvironmentTypeDev 开发
-	EnvironmentTypeDev EnvironmentType = "dev"
+	EnvironmentTypeDev Environment = "dev"
 	// EnvironmentTypeTest 测试
-	EnvironmentTypeTest EnvironmentType = "test"
+	EnvironmentTypeTest Environment = "test"
 	// EnvironmentTypeQa 测试
-	EnvironmentTypeQa EnvironmentType = "qa"
+	EnvironmentTypeQa Environment = "qa"
 	// EnvironmentTypeProd 生产
-	EnvironmentTypeProd EnvironmentType = "prod"
+	EnvironmentTypeProd Environment = "prod"
 	// EnvironmentTypeLocal 本地环境
-	EnvironmentTypeLocal EnvironmentType = "local"
+	EnvironmentTypeLocal Environment = "local"
 	// EnvironmentTypeSimulation 模拟请求（不发真实请求到服务器）
-	EnvironmentTypeSimulation EnvironmentType = "simulation"
+	EnvironmentTypeSimulation Environment = "simulation"
 )
 
-// EnvironmentType 环境类型
-type EnvironmentType string
+// Environment 环境类型
+type Environment string
