@@ -5,6 +5,8 @@ const (
 	EnvironmentTypeDev EnvironmentType = "dev"
 	// EnvironmentTypeTest 测试
 	EnvironmentTypeTest EnvironmentType = "test"
+	// EnvironmentTypeQa 测试
+	EnvironmentTypeQa EnvironmentType = "qa"
 	// EnvironmentTypeProd 生产
 	EnvironmentTypeProd EnvironmentType = "prod"
 	// EnvironmentTypeLocal 本地环境
