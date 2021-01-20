@@ -4,7 +4,7 @@ const (
 	// EnvironmentDev 开发
 	EnvironmentDev Environment = "dev"
 	// EnvironmentQa 测试
-	EnvironmentQa Environment = "qa"
+	EnvironmentTest Environment = "test"
 	// EnvironmentProd 生产
 	EnvironmentProd Environment = "prod"
 	// EnvironmentLocal 本地环境
